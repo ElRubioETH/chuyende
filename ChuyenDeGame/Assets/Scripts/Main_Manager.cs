@@ -8,7 +8,6 @@ public class Main_Manager : NetworkBehaviour, INetworkRunnerCallbacks
 {
     public NetworkPrefabRef  _malePlyerPrefab;
     public NetworkPrefabRef _femalePlayerPrefab;
-
     public NetworkRunner _runner;
     public NetworkSceneManagerDefault _sceneManager;
     

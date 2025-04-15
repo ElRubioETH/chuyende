@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Fusion;
@@ -11,7 +11,7 @@ public class Chat : NetworkBehaviour
      
     // chay ngay sau khi nhan vat tham gia tro chs
     public override void Spawned()
-    {
+    {   
         textMessage = GameObject.Find("TextMessage")
             .GetComponent<TextMeshProUGUI>();
         inputFieldMessage = GameObject.Find("InputFieldMessage")
@@ -22,6 +22,11 @@ public class Chat : NetworkBehaviour
     }
     public void SendMessageChat()
     {
+        if (Runner.LocalPlayer == null)
+        {
+            Debug.LogWarning("LocalPlayer chưa được setup!");
+            return;
+        }
         var message = inputFieldMessage.text; 
         if (string.IsNullOrWhiteSpace(message)) return;
         var id = Runner.LocalPlayer.PlayerId;
