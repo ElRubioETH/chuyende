@@ -8,10 +8,13 @@ public class Chat : NetworkBehaviour
     public TextMeshProUGUI textMessage;
     public TMP_InputField inputFieldMessage;
     public GameObject button_Chat;
-     
+
+
+
+
     // chay ngay sau khi nhan vat tham gia tro chs
     public override void Spawned()
-    {   
+    {
         textMessage = GameObject.Find("TextMessage")
             .GetComponent<TextMeshProUGUI>();
         inputFieldMessage = GameObject.Find("InputFieldMessage")

@@ -26,6 +26,6 @@ using UnityEngine.UI;
         //luu thong tin ng chs
         PlayerPrefs.SetString("PlayerName",playerName );
         PlayerPrefs.SetString("PlayerClass",playerClass );
-        SceneManager.LoadScene("main");
+        SceneManager.LoadScene("Scene_A");
     }
 }
