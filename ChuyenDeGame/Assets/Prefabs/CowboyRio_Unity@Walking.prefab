@@ -1374,6 +1374,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: facb7e3e42ac36c46b9bf5b6d606d1d2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1990402518989120808}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: facb7e3e42ac36c46b9bf5b6d606d1d2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -7329059852014685431}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: facb7e3e42ac36c46b9bf5b6d606d1d2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 170837346812483387}
   m_SourcePrefab: {fileID: 100100000, guid: facb7e3e42ac36c46b9bf5b6d606d1d2, type: 3}
 --- !u!1 &1055672833822561245 stripped
 GameObject:
@@ -1462,7 +1468,7 @@ MonoBehaviour:
   playerCinemachineCamera: {fileID: 3456450997970226489}
   FollowCamera: {fileID: 3456450997970226489}
   cameraPivot: {fileID: 6257839135353911965}
-  mouseSensitivity: 100
+  mouseSensitivity: 50
   Name: 
   nameText: {fileID: 7358600650121316384}
   healthText: {fileID: 6314368842636939625}
@@ -1495,6 +1501,7 @@ MonoBehaviour:
   - {fileID: 5708044316860619116}
   - {fileID: -6806746944220284406}
   - {fileID: 1990402518989120808}
+  - {fileID: 170837346812483387}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &1990402518989120808
 MonoBehaviour:
@@ -1513,6 +1520,40 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
+--- !u!65 &-7329059852014685431
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3613623319527667830}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0.81, z: 0}
+--- !u!114 &170837346812483387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3613623319527667830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b61f62a8c08f3344a963decb84ee134a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionRange: 10
 --- !u!4 &4138240640602596044 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: facb7e3e42ac36c46b9bf5b6d606d1d2, type: 3}
