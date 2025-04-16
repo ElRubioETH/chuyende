@@ -1459,8 +1459,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7157a7ae5c09c74b90732974e1afc68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Name: 
+  playerCinemachineCamera: {fileID: 3456450997970226489}
   FollowCamera: {fileID: 3456450997970226489}
+  cameraPivot: {fileID: 6257839135353911965}
+  mouseSensitivity: 100
+  Name: 
   nameText: {fileID: 7358600650121316384}
   healthText: {fileID: 6314368842636939625}
   _CharacterController: {fileID: 5221060917025485793}
@@ -1468,9 +1471,7 @@ MonoBehaviour:
   RunSpeed: 8
   JumpForce: 8
   Gravity: 20
-  cameraPivot: {fileID: 6257839135353911965}
   animator: {fileID: 3506019002954253615}
-  mouseSensitivity: 100
   _health: 0
   cowboyHat: {fileID: 1055672833822561245}
   cowboyBody: {fileID: 6643506371997801072}

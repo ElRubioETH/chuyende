@@ -5,24 +5,26 @@ using UnityEngine;
 
 public class Player : NetworkBehaviour
 {
-    public string Name;
+    [Header("Camera")]
+    public CinemachineCamera playerCinemachineCamera; // Changed from VirtualCamera
     public CinemachineCamera FollowCamera;
+    public Transform cameraPivot;
+    public float mouseSensitivity = 100f;
+    private float xRotation = 0f;
+
+    [Header("PlayerSetting")]
+    public string Name;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI healthText;
-
     public CharacterController _CharacterController;
     public float Speed = 5f;
     public float RunSpeed = 8f;
-
     public float JumpForce = 8f;
     public float Gravity = 20f;
     private float yVelocity;
-
-    public Transform cameraPivot;
     public Animator animator;
 
-    public float mouseSensitivity = 100f;
-    private float xRotation = 0f;
+
 
     [Networked, OnChangedRender(nameof(OnChangedHealth))]
     public int health { get; set; }
@@ -39,13 +41,26 @@ public class Player : NetworkBehaviour
     public override void Spawned()
     {
         base.Spawned();
-        FollowCamera = FindAnyObjectByType<CinemachineCamera>();
 
-        if (Object.HasInputAuthority && FollowCamera != null)
+
+
+        if (Object.HasInputAuthority)
         {
-            FollowCamera.Follow = cameraPivot;
-            FollowCamera.LookAt = cameraPivot;
+            // Disable all other cameras (safety check)
+            var allCams = FindObjectsByType<CinemachineCamera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var cam in allCams)
+            {
+                if (cam != playerCinemachineCamera)
+                    cam.gameObject.SetActive(false);
+            }
 
+            // Configure THIS player's camera
+            playerCinemachineCamera.gameObject.SetActive(true);
+            playerCinemachineCamera.Follow = cameraPivot;
+            playerCinemachineCamera.LookAt = cameraPivot;
+            playerCinemachineCamera.Priority.Value = 100; // Highest priority
+
+            // Optional: Hide local player model
             var brain = Camera.main.GetComponent<Unity.Cinemachine.CinemachineBrain>();
             if (brain != null && brain.OutputCamera != null)
             {
@@ -79,9 +94,25 @@ public class Player : NetworkBehaviour
         Health = health;
         healthText.text = $"{Health}";
     }
-
+    private void ToggleMouseLock()
+    {
+        if (Cursor.lockState == CursorLockMode.Locked)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
     public override void FixedUpdateNetwork()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ToggleMouseLock();
+        }
         if (FollowCamera != null)
         {
             nameText.transform.LookAt(FollowCamera.transform);
