@@ -26,11 +26,18 @@ public class PlayerGun : NetworkBehaviour
     {
         if (firePoint == null) return;
 
-        Runner.Spawn(
+        var bulletObj = Runner.Spawn(
             bulletPrefab,
             firePoint.position,
             firePoint.rotation,
             Object.InputAuthority
         );
+
+        // 👇 Get the bullet component and set the owner
+        if (bulletObj.TryGetComponent<Bullet>(out var bullet))
+        {
+            var player = GetComponent<Player>();
+            bullet.owner = player;
+        }
     }
 }

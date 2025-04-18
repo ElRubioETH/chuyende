@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Fusion;
 
 public class Bullet : NetworkBehaviour
@@ -6,6 +6,8 @@ public class Bullet : NetworkBehaviour
     public float speed = 20f;
     public float lifeTime = 2f;
     public int damage = 5;
+
+    public Player owner; // Reference to shooter
 
     public override void Spawned()
     {
@@ -22,12 +24,25 @@ public class Bullet : NetworkBehaviour
         if (!Object.HasStateAuthority) return;
 
         Player hitPlayer = other.GetComponent<Player>();
+
+        // 👉 Hit a player
         if (hitPlayer != null)
         {
-            hitPlayer.RpcUpdateHealth(hitPlayer.health - damage);
-        }
+            if (hitPlayer == owner)
+            {
+                // 🍃 Ignore hitting the owner
+                return;
+            }
 
-        DestroySelf();
+            // 💥 Damage other players
+            hitPlayer.RpcUpdateHealth(hitPlayer.health - damage);
+            DestroySelf();
+        }
+        else
+        {
+            // 💣 Hit something else (wall, enemy, whatever)
+            DestroySelf();
+        }
     }
 
     private void DestroySelf()

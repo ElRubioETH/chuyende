@@ -114,29 +114,31 @@ public class Main_Manager : NetworkBehaviour, INetworkRunnerCallbacks
     // ham nay se dc goi sau khi ket noi thanh cong
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        Debug.Log("....Player joiend: " + player);
-        if (_runner.LocalPlayer != player) return; 
-        //thuc hien swpan nhan vat
+        Debug.Log("....Player joined: " + player);
+        if (_runner.LocalPlayer != player) return;
+
         var playerClass = PlayerPrefs.GetString("PlayerClass");
         var playerName = PlayerPrefs.GetString("PlayerName");
 
         var prefab = playerClass.Equals("Male") ? _malePlyerPrefab : _femalePlayerPrefab;
 
-        var position = new Vector3(0,1,0);
+        // 🟢 Lấy vị trí từ GameObject tên là "SpawnPoint"
+        var spawnPoint = GameObject.Find("SpawnPoint");
+        Vector3 spawnPos = spawnPoint != null ? spawnPoint.transform.position : Vector3.zero;
+
         _runner.Spawn
-            (
-                prefab,
-                position,
-                Quaternion.identity,
-                player,
-                (r,o) =>
-                {
-                    Debug.Log("player spawned: " + 0);
-
-                }
-            );
-
+        (
+            prefab,
+            spawnPos,
+            Quaternion.identity,
+            player,
+            (r, o) =>
+            {
+                Debug.Log("player spawned: " + o);
+            }
+        );
     }
+
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {

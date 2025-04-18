@@ -109,8 +109,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.19070424, y: 0.389249, z: 0.28425956}
+  m_Center: {x: -0.06338006, y: -0.029544864, z: 0.050452918}
 --- !u!114 &-6765553569642909451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,3 +163,4 @@ MonoBehaviour:
   speed: 20
   lifeTime: 3
   damage: 5
+  owner: {fileID: -6806746944220284406, guid: d70f779d468598e4bb729eff80e9eb2d, type: 3}

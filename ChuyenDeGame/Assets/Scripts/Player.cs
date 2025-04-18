@@ -14,16 +14,18 @@ public class Player : NetworkBehaviour
     private float xRotation = 0f;
 
     [Header("PlayerSetting")]
-    public string Name;
+    [Networked, OnChangedRender(nameof(OnNameChanged))]
+    public string Name { get; set; }
     public TextMeshProUGUI nameText;
     public Slider healthSlider;
     public CharacterController _CharacterController;
-    public float Speed = 5f;
-    public float RunSpeed = 8f;
+    public float Speed = 10f;
+    public float RunSpeed = 20f;
     public float JumpForce = 8f;
     public float Gravity = 20f;
     private float yVelocity;
     public Animator animator;
+    public TMP_InputField mouseadjust;  // Reference to the TMP Input Field
 
 
 
@@ -33,13 +35,39 @@ public class Player : NetworkBehaviour
 
     [SerializeField] private GameObject cowboyHat;
     [SerializeField] private GameObject cowboyBody;
+    void OnNameChanged()
+    {
+        if (nameText != null)
+            nameText.text = Name;
+    }
+
+    void Start()
+    {
+        mouseadjust = GameObject.Find("mouseadjust")?.GetComponent<TMP_InputField>();
+        if (mouseadjust != null)
+        {
+            mouseadjust.onValueChanged.AddListener(AdjustMouseSensitivity);
+            mouseadjust.text = mouseSensitivity.ToString();  // Set initial value
+        }
+    }
+    void AdjustMouseSensitivity(string value)
+    {
+        if (float.TryParse(value, out float newSensitivity))
+        {
+            mouseSensitivity = newSensitivity;
+        }
+    }
 
     private void OnChangedHealth()
     {
         if (healthSlider != null)
             healthSlider.value = health;
     }
-
+    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+    public void RpcSetName(string newName)
+    {
+        Name = newName;
+    }
     public override void Spawned()
     {
         base.Spawned();
@@ -48,6 +76,9 @@ public class Player : NetworkBehaviour
 
         if (Object.HasInputAuthority)
         {
+
+            string savedName = PlayerPrefs.GetString("PlayerName");
+            RpcSetName(savedName);
             healthSlider = GameObject.Find("PlayerHealth")?.GetComponent<Slider>();
             if (healthSlider != null)
             {
@@ -97,7 +128,7 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    [Rpc(RpcSources.All, RpcTargets.All)]
     public void RpcUpdateHealth(int value)
     {
         Health = value;
@@ -134,32 +165,29 @@ public class Player : NetworkBehaviour
             float moveX = Input.GetAxis("Horizontal");
             float moveZ = Input.GetAxis("Vertical");
 
-            Vector3 move = transform.right * moveX + transform.forward * moveZ;
-            float moveAmount = new Vector2(moveX, moveZ).magnitude;
+            Vector2 inputVector = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+            float moveAmount = inputVector.magnitude;
 
+            // Speed check
             float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? RunSpeed : Speed;
-            move *= currentSpeed;
-
+            Vector3 move = (transform.right * inputVector.x + transform.forward * inputVector.y) * currentSpeed;
             // GRAVITY + JUMP
             if (_CharacterController.isGrounded)
             {
                 yVelocity = -1f;
-
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
                     yVelocity = JumpForce;
-
-                    // Gọi RPC để sync jump animation
                     RpcPlayJumpAnim();
                 }
             }
             else
             {
-                yVelocity -= Gravity * Time.deltaTime;
+                yVelocity -= Gravity * Runner.DeltaTime;
             }
 
             move.y = yVelocity;
-            _CharacterController.Move(move * Time.deltaTime);
+            _CharacterController.Move(move * Runner.DeltaTime);
 
             // Gọi RPC để sync Speed anim (Idle/Walk/Run)
             RpcUpdateAnimSpeed(moveAmount);
@@ -168,12 +196,15 @@ public class Player : NetworkBehaviour
 
     void RotateWithMouse()
     {
+        // Sensitivity multiplier
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
+        // Apply the vertical rotation and clamp it to avoid full rotation (to avoid flipping the camera)
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -80f, 80f);
 
+        // Apply horizontal rotation (around the Y-axis)
         cameraPivot.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * mouseX);
     }
@@ -203,4 +234,5 @@ public class Player : NetworkBehaviour
             SetLayerRecursively(child, newLayer);
         }
     }
+
 }
