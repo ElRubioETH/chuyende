@@ -2,6 +2,7 @@
 using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : NetworkBehaviour
 {
@@ -15,7 +16,7 @@ public class Player : NetworkBehaviour
     [Header("PlayerSetting")]
     public string Name;
     public TextMeshProUGUI nameText;
-    public TextMeshProUGUI healthText;
+    public Slider healthSlider;
     public CharacterController _CharacterController;
     public float Speed = 5f;
     public float RunSpeed = 8f;
@@ -35,7 +36,8 @@ public class Player : NetworkBehaviour
 
     private void OnChangedHealth()
     {
-        healthText.text = health.ToString();
+        if (healthSlider != null)
+            healthSlider.value = health;
     }
 
     public override void Spawned()
@@ -46,6 +48,13 @@ public class Player : NetworkBehaviour
 
         if (Object.HasInputAuthority)
         {
+            healthSlider = GameObject.Find("PlayerHealth")?.GetComponent<Slider>();
+            if (healthSlider != null)
+            {
+                healthSlider.minValue = 0;
+                healthSlider.maxValue = 100;
+                healthSlider.value = Health;
+            }
             // Disable all other cameras (safety check)
             var allCams = FindObjectsByType<CinemachineCamera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             foreach (var cam in allCams)
@@ -89,10 +98,13 @@ public class Player : NetworkBehaviour
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RpcUpdateHealth(int health)
+    public void RpcUpdateHealth(int value)
     {
-        Health = health;
-        healthText.text = $"{Health}";
+        Health = value;
+        health = value;
+
+
+        OnChangedHealth();
     }
     private void ToggleMouseLock()
     {
@@ -113,11 +125,7 @@ public class Player : NetworkBehaviour
         {
             ToggleMouseLock();
         }
-        if (FollowCamera != null)
-        {
-            nameText.transform.LookAt(FollowCamera.transform);
-            healthText.transform.LookAt(FollowCamera.transform);
-        }
+
 
         if (Object.HasInputAuthority)
         {

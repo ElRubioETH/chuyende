@@ -1269,8 +1269,7 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 1074393270}
+  NetworkedBehaviours: []
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &1074393270
 MonoBehaviour:
@@ -2494,8 +2493,7 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 1777797255}
+  NetworkedBehaviours: []
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &1777797255
 MonoBehaviour:
@@ -2509,9 +2507,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71f1e2269d745a54e8013f21655db851, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonRenderer: {fileID: 1777797251}
-  normalMaterial: {fileID: 2100000, guid: 92df3908d18f8304e92937d5ed85e747, type: 2}
-  pressedMaterial: {fileID: 2100000, guid: f3c6d9e347d2dca498aae7f32e14b252, type: 2}
 --- !u!1 &1970800135
 GameObject:
   m_ObjectHideFlags: 0

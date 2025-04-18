@@ -1,31 +1,69 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 using Fusion;
-public class PigAI : NetworkBehaviour
+
+
+public class EnemyAI_Fusion : NetworkBehaviour
 {
-    public NavMeshAgent agent;
-    public GameObject[] targets;
+    public float speed = 3.5f;
+    public float detectionRadius = 30f;
+    public float stoppingDistance = 1f;
 
-    // Update is called once per frame
-    void Update()
+    private Vector3 defaultPosition;
+    private NavMeshPath path;
+    private int pathIndex = 0;
+
+    public override void Spawned()
     {
-        // tìm các game object có tag là "Player"
-        targets = GameObject.FindGameObjectsWithTag("Player");
-        if (targets.Length == 0) return;
+        if (!Object.HasStateAuthority) return;
 
-        // tìm target gần nhất
-        GameObject target = null;
-        float minDistance = Mathf.Infinity;
-        foreach (var t in targets)
+        defaultPosition = transform.position;
+        path = new NavMeshPath();
+    }
+
+    public override void FixedUpdateNetwork()
+    {
+        if (!Object.HasStateAuthority) return;
+
+        Vector3 targetPos = GetTargetPosition();
+        MoveAlongPath(targetPos);
+    }
+
+    Vector3 GetTargetPosition()
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        GameObject closest = null;
+        float minDist = Mathf.Infinity;
+
+        foreach (var player in players)
         {
-            var distance = Vector3.Distance(t.transform.position, transform.position);
-            if (distance < minDistance)
+            float dist = Vector3.Distance(defaultPosition, player.transform.position);
+            if (dist <= detectionRadius && dist < minDist)
             {
-                minDistance = distance;
-                target = t;
+                minDist = dist;
+                closest = player;
             }
         }
 
-        if (target != null) agent.SetDestination(target.transform.position);
+        return closest ? closest.transform.position : defaultPosition;
+    }
+
+    void MoveAlongPath(Vector3 destination)
+    {
+        if (NavMesh.CalculatePath(transform.position, destination, NavMesh.AllAreas, path))
+        {
+            if (path.corners.Length < 2) return;
+
+            // Nếu đã gần điểm hiện tại thì chuyển sang điểm kế tiếp
+            Vector3 nextPoint = path.corners[1];
+            float distToNext = Vector3.Distance(transform.position, nextPoint);
+
+            if (distToNext < stoppingDistance)
+                return;
+
+            Vector3 dir = (nextPoint - transform.position).normalized;
+            transform.position += dir * speed * Time.fixedDeltaTime;
+            transform.forward = dir;
+        }
     }
 }
